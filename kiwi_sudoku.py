@@ -1,91 +1,95 @@
 # Sudoku solver for code.kiwi.com February 2020 challenge
-# Original version for 9*9 sudoku here: https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
-# 1st Optimization try: changed list operations to set.
+# Original version for 9x9 sudoku here: https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
+#
+# Optimizations:
+# 1. Changed most for loops to list slicing & comprehension.
+# 2. Changed for cycles to in for membership tests.
+# 3. Moved size/box_size/etc constant calculations outside of for loops.
+#
+# New features:
+# 1. Added ability to import csv
+# 2. Added ability to solve both 9x9 & 16x16 sudoku puzzles
+# 3. Added basic runtime timing for performance evaluation
 
-board = [
-    [7, "X", 15, "X", "X", 10, 1, "X", 6, "X", "X", 14, 2, 0, "X", "X"],
-    ["X", 8, "X", 6, 4, "X", "X", 7, 5, "X", "X", "X", 12, "X", 1, "X"],
-    [12, "X", "X", "X", "X", 5, 6, "X", 3, "X", "X", "X", "X", "X", "X", "X"],
-    [3, 10, 5, 14, "X", 0, 8, 12, 4, "X", "X", "X", 13, "X", "X", "X"],
-    ["X", 1, 10, "X", "X", "X", 3, 15, 8, "X", "X", 12, "X", "X", 13, 7],
-    [2, "X", "X", "X", "X", 12, 13, "X", "X", "X", "X", 1, "X", "X", "X", 15],
-    ["X", 9, "X", 12, "X", 4, "X", "X", "X", 6, "X", "X", 0, "X", "X", 2],
-    ["X", "X", 7, 15, "X", "X", 10, "X", "X", 3, "X", "X", "X", 9, 8, "X"],
-    ["X", "X", 13, "X", "X", 1, "X", "X", "X", 8, "X", "X", "X", "X", 6, "X"],
-    [6, "X", 2, "X", "X", "X", "X", 10, "X", 13, "X", 5, "X", "X", "X", "X"],
-    ["X", 4, "X", 5, 11, "X", "X", "X", "X", "X", 6, "X", 1, 13, "X", "X"],
-    [11, "X", 8, "X", "X", "X", 9, 0, "X", "X", "X", 10, 5, "X", 2, 4],
-    [0, "X", 4, 10, 12, "X", "X", 13, 15, "X", "X", "X", "X", 11, "X", "X"],
-    ["X", "X", 14, "X", "X", "X", "X", 3, "X", 9, 1, 11, "X", "X", "X", "X"],
-    ["X", 5, "X", "X", 15, "X", "X", 2, 14, 12, "X", "X", 6, "X", "X", "X"],
-    ["X", "X", 3, 11, 7, "X", 4, "X", "X", "X", 10, 8, "X", 12, "X", "X"]
-]
+from time import time
+from math import sqrt
+from csv import reader
+
+board = []
+with open('9x9.csv') as csvDataFile:
+    csvReader = reader(csvDataFile)
+    for row in csvReader:
+        board.append([int(numeric_string) for numeric_string in row])
+print('Board loaded successfully.')
+size = int(len(board[0]))
+box_size = int(sqrt(size))
+if size == 16:
+    start = 0
+    end = 16
+else:
+    start = 1
+    end = 10
+dimensions = (start, end)
+print(size)
+print('Board size detected: {0}x{1}'.format(str(size), str(size)))
+if size != 16 and size != 9:
+    print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
+    exit(1)
 
 
-def solve(bo):
+start_time = time()
+
+
+def solve(bo, size, box_size, dimensions):
     find = find_empty(bo)
     if not find:
         return True
     else:
         row, col = find
 
-    for i in range(0, 16):
-        if valid(bo, i, (row, col)):
+    for i in range(dimensions[0], dimensions[1]):
+        if valid(bo, i, (row, col), box_size):
             bo[row][col] = i
 
-            if solve(bo):
+            if solve(bo, size, box_size, dimensions):
                 return True
 
-            bo[row][col] = "X"
+            bo[row][col] = 21
 
     return False
 
 
-def valid(bo, num, pos):
+def valid(bo, num, pos, box_size):
     # Check row
-    # for i in range(len(bo[0])):
-    # if bo[pos[0]][i] == num and pos[1] != i:
-    row = set(bo[pos[0]])
-    if num in row:
+    if num in bo[pos[0]]:
         return False
-    # if num in row
-    #    return False
 
     # Check column
-    # for i in range(len(bo)):
-    #    if bo[i][pos[1]] == num and pos[0] != i:
-    column = set()
-    for i in range(len(bo)):
-        column.add(bo[i][pos[1]])
-    if num in column:
+    if num in [item[pos[1]] for item in bo]:
         return False
 
     # Check box
-    box_x = pos[1] // 4
-    box_y = pos[0] // 4
-    box = set()
-    for i in range(box_y * 4, box_y * 4 + 4):
-        box.add(frozenset(bo[i][box_x * 4: box_x * 4 + 4]))
-    # for i in range(box_y*4, box_y*4 + 4):
-    #    for j in range(box_x * 4, box_x*4 + 4):
-    #        if bo[i][j] == num and (i,j) != pos:
-    #            return False
-    if num in box:
-        return False
+    box_x = pos[1] // box_size
+    box_y = pos[0] // box_size
+
+    for i in range(box_y*box_size, box_y*box_size + box_size):
+        if num in bo[i][box_x * box_size: box_x*box_size + box_size] and (i,bo[i].index(num)) != pos:
+                return False
 
     return True
 
 
-def print_board(bo):
+def print_board(bo, size):
+    box_size = int(sqrt(size))
     for i in range(len(bo)):
-        if i % 4 == 0 and i != 0:
+        if i % box_size == 0 and i != 0:
             print("- - - - - - - - - - - - - ")
 
         for j in range(len(bo[0])):
-            if j % 4 == 0 and j != 0:
+            if j % box_size == 0 and j != 0:
                 print(" | ", end="")
 
-            if j == 15:
+            if j == (size - 1):
                 print(bo[i][j])
             else:
                 print(str(bo[i][j]) + " ", end="")
@@ -93,15 +97,16 @@ def print_board(bo):
 
 def find_empty(bo):
     for i in range(len(bo)):
-        for j in range(len(bo[0])):
-            if bo[i][j] == "X":
-                print(i, j)
-                return (i, j)  # row, col
+        if 21 in bo[i]:
+            return (i, bo[i].index(21))  # row, col
 
     return None
 
 
-print_board(board)
-solve(board)
+print_board(board, size)
+solve(board, size, box_size, dimensions)
 print("___________________")
-print_board(board)
+print_board(board, size)
+
+end_time = time()
+print(end_time-start_time)

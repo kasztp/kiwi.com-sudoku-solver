@@ -4,90 +4,104 @@
 # 2nd Optimiztion try: rewrite for numpy.
 
 import numpy as np
+from numba import jit, njit
+from math import sqrt
+from time import time
 
 
-board = [
-    [7,-1,15,-1,-1,10,1,-1,6,-1,-1,14,2,0,-1,-1],
-    [-1,8,-1,6,4,-1,-1,7,5,-1,-1,-1,12,-1,1,-1],
-    [12,-1,-1,-1,-1,5,6,-1,3,-1,-1,-1,-1,-1,-1,-1],
-    [3,10,5,14,-1,0,8,12,4,-1,-1,-1,13,-1,-1,-1],
-    [-1,1,10,-1,-1,-1,3,15,8,-1,-1,12,-1,-1,13,7],
-    [2,-1,-1,-1,-1,12,13,-1,-1,-1,-1,1,-1,-1,-1,15],
-    [-1,9,-1,12,-1,4,-1,-1,-1,6,-1,-1,0,-1,-1,2],
-    [-1,-1,7,15,-1,-1,10,-1,-1,3,-1,-1,-1,9,8,-1],
-    [-1,-1,13,-1,-1,1,-1,-1,-1,8,-1,-1,-1,-1,6,-1],
-    [6,-1,2,-1,-1,-1,-1,10,-1,13,-1,5,-1,-1,-1,-1],
-    [-1,4,-1,5,11,-1,-1,-1,-1,-1,6,-1,1,13,-1,-1],
-    [11,-1,8,-1,-1,-1,9,0,-1,-1,-1,10,5,-1,2,4],
-    [0,-1,4,10,12,-1,-1,13,15,-1,-1,-1,-1,11,-1,-1],
-    [-1,-1,14,-1,-1,-1,-1,3,-1,9,1,11,-1,-1,-1,-1],
-    [-1,5,-1,-1,15,-1,-1,2,14,12,-1,-1,6,-1,-1,-1],
-    [-1,-1,3,11,7,-1,4,-1,-1,-1,10,8,-1,12,-1,-1]
-]
-board = np.array(board)
+board = np.loadtxt(open('9x9.csv', 'rb'), delimiter=",", dtype=np.uint8)
+print('Board loaded successfully.')
+size = int(len(board[0]))
+print(size)
+print('Board size detected: {0}x{1}'.format(str(size), str(size)))
+if size != 16 and size != 9:
+    print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
+    exit(1)
 
 
-def solve(bo):
+start_time = time()
+
+
+def solve(bo, size):
+    if size == 16:
+        start = 0
+        end = 16
+    else:
+        start = 1
+        end = 10
+    box_size = int(sqrt(size))
     find = find_empty(bo)
     if not find:
         return True
     else:
         row, col = find
 
-    for i in range(0,16):
-        if valid(bo, i, (row, col)):
-            bo[row][col] = i
-
-            if solve(bo):
+    for i in range(start, end):
+        #print("Place: " + str(bo[row, col]) + " Number to check: " + str(i) + "")
+        if valid(bo, i, (row, col), box_size):
+            bo[row, col] = i
+            #print(str(i) + " saved to place.")
+            #print(bo[row, col])
+            if solve(bo, size):
                 return True
-
-            bo[row][col] = -1
+            #print("Backtracking...")
+            bo[row, col] = 21
 
     return False
 
 
-def valid(bo, num, pos):
+def valid(bo, num, pos, box_size):
+    #print(num)
     # Check row
     if num in bo[pos[0]]:
         return False
 
     # Check column
+    #print(bo[:, pos[1]])
     if num in bo[:, pos[1]]:
         return False
 
     # Check box
-    box_x = pos[1] // 4
-    box_y = pos[0] // 4
-    if num in bo[box_x * 4:box_x*4 + 4, box_y * 4:box_y * 4 + 4]:
+    box_x = pos[0] // box_size
+    box_y = pos[1] // box_size
+    #print(bo[(box_x * 4):(box_x * 4 + 4), (box_y * 4):(box_y * 4 + 4)])
+    if num in bo[(box_x * box_size):(box_x * box_size + box_size), (box_y * box_size):(box_y * box_size + box_size)]:
         return False
 
     return True
 
 
-def print_board(bo):
+
+def print_board(bo, size):
+    box_size = int(sqrt(size))
     for i in range(len(bo)):
-        if i % 4 == 0 and i != 0:
+        if i % box_size == 0 and i != 0:
             print("- - - - - - - - - - - - - ")
 
         for j in range(len(bo[0])):
-            if j % 4 == 0 and j != 0:
+            if j % box_size == 0 and j != 0:
                 print(" | ", end="")
 
-            if j == 15:
-                print(bo[i][j])
+            if j == (size - 1):
+                print(bo[i, j])
             else:
-                print(str(bo[i][j]) + " ", end="")
+                print(str(bo[i, j]) + " ", end="")
 
 
+@jit
 def find_empty(bo):
     for i in range(len(bo)):
         for j in range(len(bo[0])):
-            if bo[i][j] == -1:
+            if bo[i, j] == 21:
                 return (i, j)  # row, col
 
     return None
 
-print_board(board)
-solve(board)
+
+print_board(board, size)
+solve(board, size)
 print("___________________")
-print_board(board)
+print_board(board, size)
+
+end_time = time()
+print(end_time-start_time)
