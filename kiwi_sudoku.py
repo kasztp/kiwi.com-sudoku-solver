@@ -41,50 +41,7 @@ def load_board(filename):
     if size != 16 and size != 9:
         print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
         return None
-    return [board, size, box_size, dimensions]
-
-
-def solve(board_array):
-    bo = board_array[0]
-    size = board_array[1]
-    box_size = board_array[2]
-    dimensions = board_array[3]
-    find = find_empty(bo, size)
-    if not find:
-        return True
-    else:
-        row, col = find
-
-    for i in range(dimensions[0], dimensions[1]):
-        if valid(bo, i, (row, col), box_size):
-            bo[row][col] = i
-
-            if solve([bo, size, box_size, dimensions]):
-                return True
-
-            bo[row][col] = 0
-
-    return False
-
-
-def valid(bo, num, pos, box_size):
-    # Check row
-    if num in bo[pos[0]]:
-        return False
-
-    # Check column
-    if num in [item[pos[1]] for item in bo]:
-        return False
-
-    # Check box
-    box_x = pos[1] // box_size
-    box_y = pos[0] // box_size
-
-    for i in range(box_y * box_size, box_y * box_size + box_size):
-        if num in bo[i][box_x * box_size: box_x * box_size + box_size] and (i, bo[i].index(num)) != pos:
-            return False
-
-    return True
+    return tuple((board, size, box_size, dimensions))
 
 
 def print_board(board_array):
@@ -105,11 +62,54 @@ def print_board(board_array):
                 print(str(bo[i][j]) + " ", end="")
 
 
-def find_empty(bo, size):
-    for i in range(size):
-        if 0 in bo[i]:
-            return i, bo[i].index(0)  # row, col
-    return None
+def solve(board_array):
+    def valid(bo, num, pos, box_size):
+        # Check row
+        if num in bo[pos[0]]:
+            return False
+
+        # Check column
+        if num in [item[pos[1]] for item in bo]:
+            return False
+
+        # Check box
+        box_x = pos[1] // box_size
+        box_y = pos[0] // box_size
+
+        for i in range(box_y * box_size, box_y * box_size + box_size):
+            if num in bo[i][box_x * box_size: box_x * box_size + box_size] and (i, bo[i].index(num)) != pos:
+                return False
+
+        return True
+
+    def find_empty(bo, size):
+        for i in range(size):
+            if 0 in bo[i]:
+                return i, bo[i].index(0)  # row, col
+        return None
+
+    bo = board_array[0]
+    size = board_array[1]
+    box_size = board_array[2]
+    dimensions = board_array[3]
+
+    find = find_empty(bo, size)
+
+    if not find:
+        return True
+    else:
+        row, col = find
+
+    for i in range(dimensions[0], dimensions[1]):
+        if valid(bo, i, (row, col), box_size):
+            bo[row][col] = i
+
+            if solve((bo, size, box_size, dimensions)):
+                return True
+
+            bo[row][col] = 0
+
+    return False
 
 
 challenge = load_board('9x9.csv')
