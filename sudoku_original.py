@@ -1,5 +1,6 @@
 # Sudoku solver for code.kiwi.com February 2020 challenge
 # Original version for 9x9 sudoku here: https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
+#
 
 from time import time
 from csv import reader
