@@ -11,10 +11,11 @@
 # 2. Added ability to solve both 9x9 & 16x16 sudoku puzzles
 # 3. Added basic runtime timing for performance evaluation
 # 4. Added logging for better performance evaluation
-import logging
-from time import time
-from math import sqrt
+from copy import deepcopy
 from csv import reader
+from math import sqrt
+import logging
+from time import time, localtime, strftime
 
 
 logging.basicConfig(filename='kiwi_sudoku.log', level=logging.INFO)
@@ -27,7 +28,7 @@ class Board:
         self.box_size = box_size
         self.dimensions = dimensions
         self.iterations = 0
-        self.mask = list()
+        self.mask = self.create_mask()
 
     def __repr__(self):
         to_print = str()
@@ -71,6 +72,22 @@ class Board:
                 return i, row.index(0)  # row, col
         return None
 
+    def create_mask(self):
+        mask = deepcopy(self.board)
+        for i, row in enumerate(mask):
+            if 0 in row:
+                while 0 in row:
+                    zero_index = row.index(0)
+                    mask[i][zero_index] = set()
+                    for number in range(self.dimensions[0], self.dimensions[1]):
+                        if self.valid(number, (i, zero_index)):
+                            mask[i][zero_index].add(number)
+            else:
+                for number in row:
+                    if number != 0:
+                        mask[i][row.index(number)] = {number}
+        return mask
+
     def solve(self):
         self.iterations += 1
 
@@ -79,7 +96,7 @@ class Board:
         else:
             row, col = self.find_empty()
 
-        for i in range(self.dimensions[0], self.dimensions[1]):
+        for i in self.mask[row][col]:
             if self.valid(i, (row, col)):
                 self.board[row][col] = i
 
@@ -126,4 +143,5 @@ print('___________________\n')
 print(challenge)
 print(execution_time)
 
-logging.info(f'{time()}: Iterations: {challenge.iterations}, Time Taken: {execution_time}')
+logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
+             f'Iterations: {challenge.iterations}, Time Taken: {execution_time}')
