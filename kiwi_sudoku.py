@@ -17,14 +17,14 @@ from math import sqrt
 from csv import reader
 
 
-logging.basicConfig(filename="kiwi_sudoku.log", level=logging.INFO)
+logging.basicConfig(filename='kiwi_sudoku.log', level=logging.INFO)
 
 
 def load_board(filename):
     board = []
     with open(filename) as csvDataFile:
-        csvReader = reader(csvDataFile)
-        for row in csvReader:
+        csv_reader = reader(csvDataFile)
+        for row in csv_reader:
             board.append([int(numeric_string) for numeric_string in row])
     print('Board loaded successfully.')
     size = int(len(board[0]))
@@ -36,8 +36,7 @@ def load_board(filename):
         start = 1
         end = 10
     dimensions = (start, end)
-    print(size)
-    print('Board size detected: {0}x{1}'.format(str(size), str(size)))
+    print(f'Board size detected: {size}x{size}')
     if size != 16 and size != 9:
         print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
         return None
@@ -63,6 +62,9 @@ def print_board(board_array):
 
 
 def solve(board_array):
+    global iterations
+    iterations += 1
+
     def valid(bo, num, pos, box_size):
         # Check row
         if num in bo[pos[0]]:
@@ -82,10 +84,10 @@ def solve(board_array):
 
         return True
 
-    def find_empty(bo, size):
-        for i in range(size):
-            if 0 in bo[i]:
-                return i, bo[i].index(0)  # row, col
+    def find_empty(board):
+        for i, row in enumerate(board):
+            if 0 in row:
+                return i, row.index(0)  # row, col
         return None
 
     bo = board_array[0]
@@ -93,7 +95,7 @@ def solve(board_array):
     box_size = board_array[2]
     dimensions = board_array[3]
 
-    find = find_empty(bo, size)
+    find = find_empty(bo)
 
     if not find:
         return True
@@ -114,13 +116,15 @@ def solve(board_array):
 
 challenge = load_board('9x9.csv')
 print_board(challenge)
+iterations = 0
+
 start_time = time()
 
 solve(challenge)
 execution_time = time() - start_time
 
-print("___________________\n")
+print('___________________\n')
 print_board(challenge)
 print(execution_time)
 
-logging.info(f'{time()}: {execution_time}')
+logging.info(f'{time()}: Iterations: {iterations}, Time Taken: {execution_time}')
