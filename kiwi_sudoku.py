@@ -20,6 +20,77 @@ from csv import reader
 logging.basicConfig(filename='kiwi_sudoku.log', level=logging.INFO)
 
 
+class Board:
+    def __init__(self, board, size, box_size, dimensions):
+        self.board = board
+        self.size = size
+        self.box_size = box_size
+        self.dimensions = dimensions
+        self.iterations = 0
+        self.mask = list()
+
+    def __repr__(self):
+        to_print = str()
+        for i in range(self.size):
+            if i % self.box_size == 0 and i != 0:
+                to_print += '- - - - - - - - - - - -\n'
+
+            for j in range(self.size):
+                if j % self.box_size == 0 and j != 0:
+                    to_print += ' | '
+
+                if j == (self.size - 1):
+                    to_print += str(self.board[i][j]) + '\n'
+                else:
+                    to_print += str(self.board[i][j]) + ' '
+        return to_print
+
+    def valid(self, num, pos):
+        # Check row
+        if num in self.board[pos[0]]:
+            return False
+
+        # Check column
+        if num in [item[pos[1]] for item in self.board]:
+            return False
+
+        # Check box
+        box_x = pos[1] // self.box_size
+        box_y = pos[0] // self.box_size
+
+        for i in range(box_y * self.box_size, box_y * self.box_size + self.box_size):
+            if num in self.board[i][box_x * self.box_size: box_x * self.box_size + self.box_size]\
+                    and (i, self.board[i].index(num)) != pos:
+                return False
+
+        return True
+
+    def find_empty(self):
+        for i, row in enumerate(self.board):
+            if 0 in row:
+                return i, row.index(0)  # row, col
+        return None
+
+    def solve(self):
+        self.iterations += 1
+
+        if not self.find_empty():
+            return True
+        else:
+            row, col = self.find_empty()
+
+        for i in range(self.dimensions[0], self.dimensions[1]):
+            if self.valid(i, (row, col)):
+                self.board[row][col] = i
+
+                if self.solve():
+                    return True
+
+                self.board[row][col] = 0
+
+        return False
+
+
 def load_board(filename):
     board = []
     with open(filename) as csvDataFile:
@@ -40,91 +111,19 @@ def load_board(filename):
     if size != 16 and size != 9:
         print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
         return None
-    return tuple((board, size, box_size, dimensions))
-
-
-def print_board(board_array):
-    bo = board_array[0]
-    size = board_array[1]
-    box_size = board_array[2]
-    for i in range(size):
-        if i % box_size == 0 and i != 0:
-            print("- - - - - - - - - - - - - ")
-
-        for j in range(size):
-            if j % box_size == 0 and j != 0:
-                print(" | ", end="")
-
-            if j == (size - 1):
-                print(bo[i][j])
-            else:
-                print(str(bo[i][j]) + " ", end="")
-
-
-def solve(board_array):
-    global iterations
-    iterations += 1
-
-    def valid(bo, num, pos, box_size):
-        # Check row
-        if num in bo[pos[0]]:
-            return False
-
-        # Check column
-        if num in [item[pos[1]] for item in bo]:
-            return False
-
-        # Check box
-        box_x = pos[1] // box_size
-        box_y = pos[0] // box_size
-
-        for i in range(box_y * box_size, box_y * box_size + box_size):
-            if num in bo[i][box_x * box_size: box_x * box_size + box_size] and (i, bo[i].index(num)) != pos:
-                return False
-
-        return True
-
-    def find_empty(board):
-        for i, row in enumerate(board):
-            if 0 in row:
-                return i, row.index(0)  # row, col
-        return None
-
-    bo = board_array[0]
-    size = board_array[1]
-    box_size = board_array[2]
-    dimensions = board_array[3]
-
-    find = find_empty(bo)
-
-    if not find:
-        return True
-    else:
-        row, col = find
-
-    for i in range(dimensions[0], dimensions[1]):
-        if valid(bo, i, (row, col), box_size):
-            bo[row][col] = i
-
-            if solve((bo, size, box_size, dimensions)):
-                return True
-
-            bo[row][col] = 0
-
-    return False
+    return Board(board, size, box_size, dimensions)
 
 
 challenge = load_board('9x9.csv')
-print_board(challenge)
-iterations = 0
+print(challenge)
 
 start_time = time()
 
-solve(challenge)
+challenge.solve()
 execution_time = time() - start_time
 
 print('___________________\n')
-print_board(challenge)
+print(challenge)
 print(execution_time)
 
-logging.info(f'{time()}: Iterations: {iterations}, Time Taken: {execution_time}')
+logging.info(f'{time()}: Iterations: {challenge.iterations}, Time Taken: {execution_time}')
