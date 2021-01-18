@@ -1,16 +1,20 @@
 # Sudoku solver for code.kiwi.com February 2020 challenge
-# Original version for 9x9 sudoku here: https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
+# Original version for 9x9 sudoku here:
+# https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
 #
 # Optimizations:
 # 1. Changed most for loops to list slicing & comprehension.
 # 2. Changed for cycles to "in" for membership tests.
 # 3. Moved size/box_size/etc constant calculations outside of for loops.
+# 4. Added mask with possible valid values
+# 5. Added board preprocessing based on valid value mask
 #
 # New features:
 # 1. Added ability to import csv
 # 2. Added ability to solve both 9x9 & 16x16 sudoku puzzles
 # 3. Added basic runtime timing for performance evaluation
 # 4. Added logging for better performance evaluation
+
 from copy import deepcopy
 from csv import reader
 from math import sqrt
@@ -88,6 +92,20 @@ class Board:
                         mask[i][row.index(number)] = {number}
         return mask
 
+    def update_board(self):
+        def masking(item):
+            if type(item) == set and len(item) == 1:
+                return True
+            else:
+                return False
+
+        for i, row in enumerate(self.mask):
+            for number in filter(masking, row):
+                x_pos = row.index(number)
+                num = number.pop()
+                self.board[i][x_pos] = num
+                self.mask[i][x_pos] = num
+
     def solve(self):
         self.iterations += 1
 
@@ -132,14 +150,19 @@ def load_board(filename):
 
 
 challenge = load_board('9x9.csv')
+print('________________________\n')
 print(challenge)
 
 start_time = time()
 
+# Preprocess board based on mask:
+challenge.update_board()
+
 challenge.solve()
+
 execution_time = time() - start_time
 
-print('___________________\n')
+print('________________________\n')
 print(challenge)
 print(execution_time)
 
