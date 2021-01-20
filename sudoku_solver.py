@@ -22,7 +22,7 @@ import logging
 from time import time, localtime, strftime
 
 
-logging.basicConfig(filename='kiwi_sudoku.log', level=logging.INFO)
+logging.basicConfig(filename='./logs/kiwi_sudoku.log', level=logging.INFO)
 
 
 class Board:
@@ -149,7 +149,9 @@ def load_board(filename):
     return Board(board, size, box_size, dimensions)
 
 
-challenge = load_board('9x9.csv')
+filename = './sudokus/9x9.csv'
+challenge = load_board(filename)
+
 print('________________________\n')
 print(challenge)
 
@@ -157,7 +159,7 @@ start_time = time()
 
 # Preprocess board based on mask:
 challenge.update_board()
-
+# Solve board:
 challenge.solve()
 
 execution_time = time() - start_time
@@ -167,4 +169,4 @@ print(challenge)
 print(execution_time)
 
 logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-             f'Iterations: {challenge.iterations}, Time Taken: {execution_time}')
+             f'Iterations: {challenge.iterations}, Time Taken: {execution_time}, File: {filename}')
