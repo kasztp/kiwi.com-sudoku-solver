@@ -5,14 +5,14 @@ Sudoku solver for 9x9 16x16 size.
 Based on:
 https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
 
-Current speedup compared to original code: ~10-12x
+Current speedup compared to original code (depending on size, and hardness of sudoku): ~50-67000x
 
 Optimizations compared to original code from above:
 1. Changed most for loops to list slicing & comprehension.
 2. Changed for cycles to "in" for membership tests.
 3. Moved size/box_size/etc constant calculations outside of for loops.
 4. Added mask with possible valid values
-5. Added board preprocessing based on valid value mask
+5. Added board preprocessing based on valid values mask
 
 New features:
 1. Added ability to import csv
