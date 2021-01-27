@@ -8,6 +8,7 @@
 # 3. Moved size/box_size/etc constant calculations outside of for loops.
 # 4. Added mask with possible valid values
 # 5. Added board preprocessing based on valid value mask
+# 6. Extended preprocessing with mask_update method
 #
 # New features:
 # 1. Added ability to import csv
@@ -92,6 +93,23 @@ class Board:
                         mask[i][row.index(number)] = {number}
         return mask
 
+    def update_mask(self):
+        def masking(item):
+            if type(item) == set and len(item) > 1:
+                return True
+            else:
+                return False
+
+        for i, row in enumerate(self.mask):
+            for numbers in filter(masking, row):
+                x_pos = row.index(numbers)
+                to_remove = set()
+                for number in numbers:
+                    if not self.valid(number, (i, x_pos)):
+                        to_remove.add(number)
+                for num in to_remove:
+                    self.mask[i][x_pos].remove(num)
+
     def update_board(self):
         def masking(item):
             if type(item) == set and len(item) == 1:
@@ -158,7 +176,13 @@ print(challenge)
 start_time = time()
 
 # Preprocess board based on mask:
-challenge.update_board()
+temp_board = deepcopy(challenge)
+temp_board.mask = None
+while temp_board.mask != challenge.mask:
+    temp_board = deepcopy(challenge)
+    challenge.update_board()
+    challenge.update_mask()
+
 # Solve board:
 challenge.solve()
 
