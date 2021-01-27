@@ -8,6 +8,7 @@
 # 3. Moved size/box_size/etc constant calculations outside of for loops.
 # 4. Added mask with possible valid values
 # 5. Added board preprocessing based on valid value mask
+# 6. Extended preprocessing with mask_update method
 #
 # New features:
 # 1. Added ability to import csv
@@ -15,14 +16,16 @@
 # 3. Added basic runtime timing for performance evaluation
 # 4. Added logging for better performance evaluation
 
+import logging
+import platform
 from copy import deepcopy
 from csv import reader
 from math import sqrt
-import logging
 from time import time, localtime, strftime
 
 
-logging.basicConfig(filename='kiwi_sudoku.log', level=logging.INFO)
+interpreter = f'{platform.python_implementation()} {platform.python_version()}'
+logging.basicConfig(filename='./logs/kiwi_sudoku.log', level=logging.INFO)
 
 
 class Board:
@@ -92,6 +95,23 @@ class Board:
                         mask[i][row.index(number)] = {number}
         return mask
 
+    def update_mask(self):
+        def masking(item):
+            if type(item) == set and len(item) > 1:
+                return True
+            else:
+                return False
+
+        for i, row in enumerate(self.mask):
+            for numbers in filter(masking, row):
+                x_pos = row.index(numbers)
+                to_remove = set()
+                for number in numbers:
+                    if not self.valid(number, (i, x_pos)):
+                        to_remove.add(number)
+                for num in to_remove:
+                    self.mask[i][x_pos].remove(num)
+
     def update_board(self):
         def masking(item):
             if type(item) == set and len(item) == 1:
@@ -105,6 +125,17 @@ class Board:
                 num = number.pop()
                 self.board[i][x_pos] = num
                 self.mask[i][x_pos] = num
+
+    def preprocess_board(self):
+        temp_board = deepcopy(self)
+        temp_board.mask = None
+        passes = 0
+        while temp_board.mask != self.mask:
+            passes += 1
+            temp_board = deepcopy(self)
+            self.update_board()
+            self.update_mask()
+        return passes
 
     def solve(self):
         self.iterations += 1
@@ -149,15 +180,19 @@ def load_board(filename):
     return Board(board, size, box_size, dimensions)
 
 
-challenge = load_board('9x9.csv')
+filename = './sudokus/9x9.csv'
+challenge = load_board(filename)
+
 print('________________________\n')
 print(challenge)
 
 start_time = time()
 
 # Preprocess board based on mask:
-challenge.update_board()
+preprocess_passes = challenge.preprocess_board()
+print(f'Preprocessing passes: {preprocess_passes}')
 
+# Solve board:
 challenge.solve()
 
 execution_time = time() - start_time
@@ -167,4 +202,5 @@ print(challenge)
 print(execution_time)
 
 logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-             f'Iterations: {challenge.iterations}, Time Taken: {execution_time}')
+             f'Iterations: {challenge.iterations}, Preprocessing passes: {preprocess_passes} '
+             f'Time Taken: {execution_time}, File: {filename}, Interpreter: {interpreter}')

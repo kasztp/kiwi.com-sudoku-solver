@@ -22,6 +22,7 @@ New features:
 
 Todo:
 1. Optimize further for speed? OR Write efficient parallel python code based on this paper: https://shawnjzlee.me/dl/efficient-parallel-sudoku.pdf
-2. Generalize for all possible sudoku sizes.
-3. OCR
-4. Multiplatform GUI with Kivy
+2. Test PyPy speedup?
+3. Generalize for all possible sudoku sizes.
+4. OCR
+5. Multiplatform GUI with Kivy
