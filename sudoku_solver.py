@@ -23,7 +23,6 @@ from csv import reader
 from math import sqrt
 from time import time, localtime, strftime
 
-
 interpreter = f'{platform.python_implementation()} {platform.python_version()}'
 logging.basicConfig(filename='./logs/kiwi_sudoku.log', level=logging.INFO)
 
@@ -67,7 +66,7 @@ class Board:
         box_y = pos[0] // self.box_size
 
         for i in range(box_y * self.box_size, box_y * self.box_size + self.box_size):
-            if num in self.board[i][box_x * self.box_size: box_x * self.box_size + self.box_size]\
+            if num in self.board[i][box_x * self.box_size: box_x * self.box_size + self.box_size] \
                     and (i, self.board[i].index(num)) != pos:
                 return False
 
@@ -97,10 +96,7 @@ class Board:
 
     def update_mask(self):
         def masking(item):
-            if type(item) == set and len(item) > 1:
-                return True
-            else:
-                return False
+            return bool(isinstance(item, set) and len(item) > 1)
 
         for i, row in enumerate(self.mask):
             for numbers in filter(masking, row):
@@ -114,10 +110,7 @@ class Board:
 
     def update_board(self):
         def masking(item):
-            if type(item) == set and len(item) == 1:
-                return True
-            else:
-                return False
+            return bool(isinstance(item, set) and len(item) == 1)
 
         for i, row in enumerate(self.mask):
             for number in filter(masking, row):
@@ -165,6 +158,9 @@ def load_board(filename):
             board.append([int(numeric_string) for numeric_string in row])
     print('Board loaded successfully.')
     size = int(len(board[0]))
+    if size not in (9, 16):
+        print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
+        return None
     box_size = int(sqrt(size))
     if size == 16:
         start = 1
@@ -174,9 +170,6 @@ def load_board(filename):
         end = 10
     dimensions = (start, end)
     print(f'Board size detected: {size}x{size}')
-    if size != 16 and size != 9:
-        print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
-        return None
     return Board(board, size, box_size, dimensions)
 
 
