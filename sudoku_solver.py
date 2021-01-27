@@ -16,13 +16,15 @@
 # 3. Added basic runtime timing for performance evaluation
 # 4. Added logging for better performance evaluation
 
+import logging
+import platform
 from copy import deepcopy
 from csv import reader
 from math import sqrt
-import logging
 from time import time, localtime, strftime
 
 
+interpreter = f'{platform.python_implementation()} {platform.python_version()}'
 logging.basicConfig(filename='./logs/kiwi_sudoku.log', level=logging.INFO)
 
 
@@ -124,6 +126,17 @@ class Board:
                 self.board[i][x_pos] = num
                 self.mask[i][x_pos] = num
 
+    def preprocess_board(self):
+        temp_board = deepcopy(self)
+        temp_board.mask = None
+        passes = 0
+        while temp_board.mask != self.mask:
+            passes += 1
+            temp_board = deepcopy(self)
+            self.update_board()
+            self.update_mask()
+        return passes
+
     def solve(self):
         self.iterations += 1
 
@@ -176,12 +189,8 @@ print(challenge)
 start_time = time()
 
 # Preprocess board based on mask:
-temp_board = deepcopy(challenge)
-temp_board.mask = None
-while temp_board.mask != challenge.mask:
-    temp_board = deepcopy(challenge)
-    challenge.update_board()
-    challenge.update_mask()
+preprocess_passes = challenge.preprocess_board()
+print(f'Preprocessing passes: {preprocess_passes}')
 
 # Solve board:
 challenge.solve()
@@ -193,4 +202,5 @@ print(challenge)
 print(execution_time)
 
 logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-             f'Iterations: {challenge.iterations}, Time Taken: {execution_time}, File: {filename}')
+             f'Iterations: {challenge.iterations}, Preprocessing passes: {preprocess_passes} '
+             f'Time Taken: {execution_time}, File: {filename}, Interpreter: {interpreter}')
