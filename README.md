@@ -2,6 +2,8 @@
 
 Sudoku solver for 9x9 16x16 size.
 
+Usage: _main.py <input_file> <output_file>_
+
 Based on:
 https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
 
@@ -19,6 +21,8 @@ New features:
 2. Added ability to solve both 9x9 & 16x16 sudoku puzzles
 3. Added basic runtime timing for performance evaluation
 4. Added logging for better performance evaluation
+5. Added capability to save solutions to disk
+6. Added concurrent batch processing capability
 
 Todo:
 1. Optimize further for speed? OR Write efficient parallel python code based on this paper: https://shawnjzlee.me/dl/efficient-parallel-sudoku.pdf

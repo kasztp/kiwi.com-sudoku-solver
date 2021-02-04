@@ -1,30 +1,7 @@
-# Sudoku solver for code.kiwi.com February 2020 challenge
-# Original version for 9x9 sudoku here:
-# https://techwithtim.net/tutorials/python-programming/sudoku-solver-backtracking/
-#
-# Optimizations:
-# 1. Changed most for loops to list slicing & comprehension.
-# 2. Changed for cycles to "in" for membership tests.
-# 3. Moved size/box_size/etc constant calculations outside of for loops.
-# 4. Added mask with possible valid values
-# 5. Added board preprocessing based on valid value mask
-# 6. Extended preprocessing with mask_update method
-#
-# New features:
-# 1. Added ability to import csv
-# 2. Added ability to solve both 9x9 & 16x16 sudoku puzzles
-# 3. Added basic runtime timing for performance evaluation
-# 4. Added logging for better performance evaluation
+# Sudoku board Class and solver logic
 
-import logging
-import platform
+from time import time
 from copy import deepcopy
-from csv import reader
-from math import sqrt
-from time import time, localtime, strftime
-
-interpreter = f'{platform.python_implementation()} {platform.python_version()}'
-logging.basicConfig(filename='./logs/kiwi_sudoku.log', level=logging.INFO)
 
 
 class Board:
@@ -34,6 +11,8 @@ class Board:
         self.box_size = box_size
         self.dimensions = dimensions
         self.iterations = 0
+        self.cues = self.set_cues()
+        self.mc_cues = self.set_mc_cues()
         self.mask = self.create_mask()
 
     def __repr__(self):
@@ -78,6 +57,47 @@ class Board:
                 return i, row.index(0)  # row, col
         return None
 
+    def find_min_empty(self):
+        def is_list(item):
+            return bool(isinstance(item, list))
+
+        min_len_list = [0, [1, 2, 3, 4, 5, 6, 7, 8, 9]]
+        for i, row in enumerate(self.mask):
+            if len(list(filter(is_list, row))) >= 1:
+                sorted_sets = sorted(filter(is_list, row), key=len)
+                for j, shortest in enumerate(sorted_sets):
+                    if self.board[i][row.index(shortest)] == 0:
+                        if len(min_len_list[1]) > len(sorted_sets[j]):
+                            min_len_list[0] = i
+                            min_len_list[1] = sorted_sets[j]
+                            break
+
+        if min_len_list != [0, [1, 2, 3, 4, 5, 6, 7, 8, 9]]:
+            return min_len_list[0], self.mask[min_len_list[0]].index(min_len_list[1])  # row, col
+        else:
+            return self.find_empty()
+
+    def set_cues(self):
+        cues = []
+        cue_dict = dict()
+        for row in self.board:
+            for number in row:
+                if number != 0:
+                    cues.append(number)
+        for i in range(self.dimensions[0], self.dimensions[1]):
+            cue_dict[i] = cues.count(i)
+        return cue_dict
+
+    def set_mc_cues(self):
+        mc_cues = []
+        for item in sorted(self.cues.items(), key=lambda x: x[1], reverse=True):
+            mc_cues.append(item[0])
+        if len(mc_cues) < 9:
+            missing = set(range(1, self.dimensions[1])).difference(mc_cues)
+            print(f"Missing: {missing}")
+            mc_cues += missing
+        return mc_cues
+
     def create_mask(self):
         mask = deepcopy(self.board)
         for i, row in enumerate(mask):
@@ -98,15 +118,22 @@ class Board:
         def masking(item):
             return bool(isinstance(item, set) and len(item) > 1)
 
+        self.cues = self.set_cues()
+        self.mc_cues = self.set_mc_cues()
         for i, row in enumerate(self.mask):
             for numbers in filter(masking, row):
                 x_pos = row.index(numbers)
+                to_mask = list()
                 to_remove = set()
                 for number in numbers:
                     if not self.valid(number, (i, x_pos)):
                         to_remove.add(number)
                 for num in to_remove:
                     self.mask[i][x_pos].remove(num)
+                for num in self.mc_cues:
+                    if num in self.mask[i][x_pos]:
+                        to_mask.append(num)
+                self.mask[i][x_pos] = to_mask
 
     def update_board(self):
         def masking(item):
@@ -128,17 +155,19 @@ class Board:
             temp_board = deepcopy(self)
             self.update_board()
             self.update_mask()
+
         return passes
 
     def solve(self):
         self.iterations += 1
-
-        if not self.find_empty():
+        pick = self.find_min_empty()
+        if not pick:
             return True
         else:
-            row, col = self.find_empty()
+            row, col = pick
 
         for i in self.mask[row][col]:
+            # ^ Only check for numbers in mask in the order of most common cues
             if self.valid(i, (row, col)):
                 self.board[row][col] = i
 
@@ -150,50 +179,15 @@ class Board:
         return False
 
 
-def load_board(filename):
-    board = []
-    with open(filename) as csvDataFile:
-        csv_reader = reader(csvDataFile)
-        for row in csv_reader:
-            board.append([int(numeric_string) for numeric_string in row])
-    print('Board loaded successfully.')
-    size = int(len(board[0]))
-    if size not in (9, 16):
-        print('Unsupported board size detected, exiting. (Only 9x9 or 16x16 is supported as of now.)')
-        return None
-    box_size = int(sqrt(size))
-    if size == 16:
-        start = 1
-        end = 17
-    else:
-        start = 1
-        end = 10
-    dimensions = (start, end)
-    print(f'Board size detected: {size}x{size}')
-    return Board(board, size, box_size, dimensions)
+def batch_preprocess(item):
+    start_time = time()
+    passes = item.preprocess_board()
+    execution_time = time() - start_time
+    return passes, execution_time, item
 
 
-filename = './sudokus/9x9.csv'
-challenge = load_board(filename)
-
-print('________________________\n')
-print(challenge)
-
-start_time = time()
-
-# Preprocess board based on mask:
-preprocess_passes = challenge.preprocess_board()
-print(f'Preprocessing passes: {preprocess_passes}')
-
-# Solve board:
-challenge.solve()
-
-execution_time = time() - start_time
-
-print('________________________\n')
-print(challenge)
-print(execution_time)
-
-logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-             f'Iterations: {challenge.iterations}, Preprocessing passes: {preprocess_passes} '
-             f'Time Taken: {execution_time}, File: {filename}, Interpreter: {interpreter}')
+def batch_solve(challenge):
+    start_time = time()
+    challenge.solve()
+    execution_time = time() - start_time
+    return execution_time, challenge
