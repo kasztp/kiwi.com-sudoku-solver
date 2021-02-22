@@ -24,3 +24,27 @@ INFO:root:Iterations: 2717, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 2, 4: 
 INFO:root:04 Feb 2021 23:09:32: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.27499985694885254, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
 INFO:root:22 Feb 2021 13:02:41: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.3380441665649414, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
 INFO:root:22 Feb 2021 21:47:56: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.25807929039001465, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
+INFO:root:22 Feb 2021 23:06:20: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.27095508575439453, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
+INFO:root:-----------------------------------------------------------------------
+INFO:root:22 Feb 2021 23:07:55: Solved Challenges: 20, Avg. Time/Sudoku: 3.4382962942123414 Overall Time Taken: 68.76592588424683, File: ./sudokus/20_hard_sudokus.txt, Interpreter: PyPy 3.7.9
+INFO:root:-----------------------------------------------------------------------
+INFO:root:Iterations: 230477, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 4, 4: 4, 5: 3, 6: 3, 7: 2, 8: 3, 9: 2} Time Taken: 11.175040245056152, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 801774, Preprocessing passes: 2 Cues: {1: 2, 2: 2, 3: 5, 4: 4, 5: 2, 6: 2, 7: 3, 8: 4, 9: 2} Time Taken: 35.843039989471436, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 2440, Preprocessing passes: 2 Cues: {1: 3, 2: 2, 3: 4, 4: 2, 5: 4, 6: 3, 7: 3, 8: 2, 9: 5} Time Taken: 0.11699581146240234, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 851, Preprocessing passes: 2 Cues: {1: 2, 2: 3, 3: 4, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 4} Time Taken: 0.06899905204772949, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 4302, Preprocessing passes: 2 Cues: {1: 4, 2: 4, 3: 2, 4: 4, 5: 2, 6: 3, 7: 2, 8: 3, 9: 3} Time Taken: 0.20799994468688965, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 212989, Preprocessing passes: 2 Cues: {1: 2, 2: 1, 3: 3, 4: 4, 5: 3, 6: 3, 7: 4, 8: 3, 9: 3} Time Taken: 9.631925106048584, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 81826, Preprocessing passes: 2 Cues: {1: 2, 2: 3, 3: 5, 4: 2, 5: 3, 6: 4, 7: 4, 8: 2, 9: 2} Time Taken: 3.684041976928711, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 15397, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 3, 5: 4, 6: 3, 7: 3, 8: 2, 9: 2} Time Taken: 0.733957052230835, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 106439, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 2, 5: 3, 6: 5, 7: 3, 8: 2, 9: 3} Time Taken: 5.393044710159302, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 22037, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 2, 4: 3, 5: 4, 6: 2, 7: 2, 8: 4, 9: 3} Time Taken: 1.008958101272583, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 9262, Preprocessing passes: 2 Cues: {1: 2, 2: 3, 3: 4, 4: 4, 5: 3, 6: 3, 7: 2, 8: 2, 9: 3} Time Taken: 0.6840779781341553, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 3797, Preprocessing passes: 2 Cues: {1: 3, 2: 2, 3: 2, 4: 4, 5: 2, 6: 2, 7: 4, 8: 2, 9: 4} Time Taken: 0.21900105476379395, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 149939, Preprocessing passes: 2 Cues: {1: 2, 2: 4, 3: 4, 4: 4, 5: 3, 6: 3, 7: 2, 8: 2, 9: 1} Time Taken: 6.992999076843262, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 659, Preprocessing passes: 2 Cues: {1: 2, 2: 3, 3: 5, 4: 4, 5: 4, 6: 3, 7: 2, 8: 3, 9: 2} Time Taken: 0.07500004768371582, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 1728, Preprocessing passes: 2 Cues: {1: 3, 2: 4, 3: 2, 4: 4, 5: 2, 6: 2, 7: 2, 8: 3, 9: 4} Time Taken: 0.12900280952453613, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 13071, Preprocessing passes: 2 Cues: {1: 4, 2: 4, 3: 4, 4: 3, 5: 2, 6: 3, 7: 2, 8: 3, 9: 1} Time Taken: 0.6219160556793213, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 4648, Preprocessing passes: 2 Cues: {1: 4, 2: 3, 3: 2, 4: 3, 5: 3, 6: 3, 7: 4, 8: 3, 9: 3} Time Taken: 0.28608131408691406, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 24389, Preprocessing passes: 2 Cues: {1: 4, 2: 2, 3: 2, 4: 3, 5: 4, 6: 2, 7: 3, 8: 3, 9: 3} Time Taken: 1.249983787536621, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 8195, Preprocessing passes: 2 Cues: {1: 4, 2: 3, 3: 3, 4: 2, 5: 3, 6: 4, 7: 3, 8: 3, 9: 3} Time Taken: 0.4229588508605957, File: ./sudokus/20_hard_sudokus.txt
+INFO:root:Iterations: 2717, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 2, 4: 4, 5: 2, 6: 2, 7: 5, 8: 5, 9: 3} Time Taken: 0.16499924659729004, File: ./sudokus/20_hard_sudokus.txt

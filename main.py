@@ -103,32 +103,39 @@ if __name__ == '__main__':
             output = ''
             for line in challenge.board:
                 output += ','.join(map(str, line)) + '\n'
-            print(f'Output file generated successfully.')
+            print('Output file generated successfully.')
             print(f'Saving file: {RESULT_FILE}')
             with open(RESULT_FILE, 'w') as output_file:
                 output_file.writelines(output)
 
         # Write to log:
         if BATCH_MODE:
-            logging.info(f'------------------------------------------------------------------------------------------')
+            logging.info('-----------------------------------------------------------------------')
             logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-                         f'Solved Challenges: {len(challenges)}, Avg. Time/Sudoku: {execution_time / len(challenges)} '
-                         f'Overall Time Taken: {execution_time}, File: {FILENAME}, Interpreter: {INTERPRETER}')
-            logging.info(f'------------------------------------------------------------------------------------------')
+                         f'Solved Challenges: {len(challenges)}, '
+                         f'Avg. Time/Sudoku: {execution_time / len(challenges)} '
+                         f'Overall Time Taken: {execution_time}, '
+                         f'File: {FILENAME}, '
+                         f'Interpreter: {INTERPRETER}')
+            logging.info('-----------------------------------------------------------------------')
             per_sudoku_details = ''
             for data in tqdm(list(zip(preprocessed, solved, challenges)), **kwargs):
                 pp, times, challenge = data[0], data[1], data[2]
-                to_log = (f'Iterations: {challenge.iterations}, Preprocessing passes: {pp[0]} '
+                to_log = (f'Iterations: {challenge.iterations}, '
+                          f'Preprocessing passes: {pp[0]} '
                           f'Cues: {challenge.cues} '
-                          f'Time Taken: {pp[1] + times[0]}, File: {FILENAME}')
+                          f'Time Taken: {pp[1] + times[0]}, '
+                          f'File: {FILENAME}')
                 logging.info(to_log)
         else:
             logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
-                         f'Iterations: {challenge.iterations}, Preprocessing passes: {preprocess_passes} '
+                         f'Iterations: {challenge.iterations}, '
+                         f'Preprocessing passes: {preprocess_passes} '
                          f'Cues: {challenge.cues} '
-                         f'Time Taken: {execution_time}, File: {FILENAME}, Interpreter: {INTERPRETER}')
+                         f'Time Taken: {execution_time}, '
+                         f'File: {FILENAME}, '
+                         f'Interpreter: {INTERPRETER}')
 
     except (IOError, OSError) as ex:
         print(f"Caught the Error: {ex}")
         logging.info(f'Error: {ex}')
-        pass

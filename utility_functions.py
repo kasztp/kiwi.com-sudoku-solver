@@ -53,7 +53,6 @@ def load_from_dataset(filename):
             board = []
     if len(dataset) == dataset_length:
         print(f'Boards loaded successfully: {dataset_length}')
-
     return dataset
 
 
@@ -78,5 +77,3 @@ def save_solved_dataset(original_filename, results_file, solved_dataset):
     print(f'Saving file: {results_file}')
     with open(results_file, 'w') as output_file:
         output_file.writelines(output)
-
-    return None
