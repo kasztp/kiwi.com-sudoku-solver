@@ -22,3 +22,5 @@ INFO:root:Iterations: 24389, Preprocessing passes: 2 Cues: {1: 4, 2: 2, 3: 2, 4:
 INFO:root:Iterations: 8195, Preprocessing passes: 2 Cues: {1: 4, 2: 3, 3: 3, 4: 2, 5: 3, 6: 4, 7: 3, 8: 3, 9: 3} Time Taken: 0.395998477935791, File: ./sudokus/20_hard_sudokus.txt
 INFO:root:Iterations: 2717, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 2, 4: 4, 5: 2, 6: 2, 7: 5, 8: 5, 9: 3} Time Taken: 0.1600055694580078, File: ./sudokus/20_hard_sudokus.txt
 INFO:root:04 Feb 2021 23:09:32: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.27499985694885254, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
+INFO:root:22 Feb 2021 13:02:41: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.3380441665649414, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7
+INFO:root:22 Feb 2021 21:47:56: Iterations: 5876, Preprocessing passes: 2 Cues: {1: 3, 2: 3, 3: 3, 4: 1, 5: 2, 6: 3, 7: 3, 8: 5, 9: 3} Time Taken: 0.25807929039001465, File: ./sudokus/9x9.csv, Interpreter: CPython 3.8.7

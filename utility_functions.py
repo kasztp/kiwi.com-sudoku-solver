@@ -80,4 +80,3 @@ def save_solved_dataset(original_filename, results_file, solved_dataset):
         output_file.writelines(output)
 
     return None
-

@@ -48,6 +48,8 @@ if __name__ == '__main__':
             first_line = test_run.readline().strip()
         if ',' in first_line:
             challenge = load_from_csv(FILENAME)
+            if args.verbose:
+                print(challenge)
         else:
             BATCH_MODE = True
             challenges = load_from_dataset(FILENAME)
@@ -57,10 +59,9 @@ if __name__ == '__main__':
                 'unit_scale': True,
                 'leave': True
             }
-        print('________________________\n')
-        if args.verbosity:
-            for board in challenges:
-                print(board)
+            if args.verbose:
+                for board in challenges:
+                    print(board)
 
         start_time = time()
 
@@ -75,7 +76,7 @@ if __name__ == '__main__':
                 challenges[index] = item[2]
         else:
             preprocess_passes = challenge.preprocess_board()
-            if args.verbosity:
+            if args.verbose:
                 print(f'Preprocessing passes: {preprocess_passes}')
         print('________________________\n')
 
@@ -131,4 +132,3 @@ if __name__ == '__main__':
         print(f"Caught the Error: {ex}")
         logging.info(f'Error: {ex}')
         pass
-
