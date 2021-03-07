@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 pp, times, challenge = data[0], data[1], data[2]
                 to_log = (f'Iterations: {challenge.iterations}, '
                           f'Preprocessing passes: {pp[0]} '
-                          f'Cues: {challenge.cues} '
+                          f'Cues: {challenge.clues} '
                           f'Time Taken: {pp[1] + times[0]}, '
                           f'File: {FILENAME}')
                 logging.info(to_log)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
             logging.info(f'{strftime("%d %b %Y %H:%M:%S", localtime())}: '
                          f'Iterations: {challenge.iterations}, '
                          f'Preprocessing passes: {preprocess_passes} '
-                         f'Cues: {challenge.cues} '
+                         f'Cues: {challenge.clues} '
                          f'Time Taken: {execution_time}, '
                          f'File: {FILENAME}, '
                          f'Interpreter: {INTERPRETER}')
