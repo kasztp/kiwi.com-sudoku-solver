@@ -1,4 +1,4 @@
-# Sudoku solver originally prepared for Kiwi.com coding challenge
+# Sudoku solver originally prepared for Kiwi.com coding challenge [![Pylint](https://github.com/kasztp/kiwi.com-sudoku-solver/actions/workflows/pylint.yml/badge.svg)](https://github.com/kasztp/kiwi.com-sudoku-solver/actions/workflows/pylint.yml)
 
 Sudoku solver for 9x9 16x16 size.
 
