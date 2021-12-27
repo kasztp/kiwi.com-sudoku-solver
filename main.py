@@ -63,10 +63,9 @@ if __name__ == '__main__':
                 for board in challenges:
                     print(board)
 
-        start_time = time()
-
         # Preprocess board based on mask:
         print('Preprocessing...')
+        start_time = time()
         if BATCH_MODE:
             with ProcessPoolExecutor(max_workers=8) as executor:
                 preprocessed = list(tqdm(executor.map(batch_preprocess, challenges,

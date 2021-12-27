@@ -105,40 +105,40 @@ class Board:
             if 0 in row:
                 while 0 in row:
                     zero_index = row.index(0)
-                    mask[i][zero_index] = set()
+                    mask[i][zero_index] = []
                     for number in range(self.dimensions[0], self.dimensions[1]):
                         if self.valid(number, (i, zero_index)):
-                            mask[i][zero_index].add(number)
+                            mask[i][zero_index].append(number)
             else:
                 for number in row:
                     if number != 0:
-                        mask[i][row.index(number)] = {number}
+                        mask[i][row.index(number)] = [number]
         return mask
 
     def update_mask(self):
         def masking(item):
-            return bool(isinstance(item, set) and len(item) > 1)
+            return bool(isinstance(item, list)) and len(item) > 1
 
         self.clues = self.set_clues()
         self.most_common_clues = self.set_most_common_clues()
-        for i, row in enumerate(self.mask):
+        for y_pos, row in enumerate(self.mask):
             for numbers in filter(masking, row):
                 x_pos = row.index(numbers)
                 to_mask = list()
                 to_remove = set()
                 for number in numbers:
-                    if not self.valid(number, (i, x_pos)):
+                    if not self.valid(number, (y_pos, x_pos)):
                         to_remove.add(number)
                 for num in to_remove:
-                    self.mask[i][x_pos].remove(num)
+                    self.mask[y_pos][x_pos].remove(num)
                 for num in self.most_common_clues:
-                    if num in self.mask[i][x_pos]:
+                    if num in self.mask[y_pos][x_pos]:
                         to_mask.append(num)
-                self.mask[i][x_pos] = to_mask
+                self.mask[y_pos][x_pos] = to_mask
 
     def update_board(self):
         def masking(item):
-            return bool(isinstance(item, set) and len(item) == 1)
+            return bool(isinstance(item, list) and len(item) == 1)
 
         for i, row in enumerate(self.mask):
             for number in filter(masking, row):
