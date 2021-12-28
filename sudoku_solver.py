@@ -58,7 +58,7 @@ class Board:
         return None
 
     def find_min_empty(self):
-        # Find empty field where the number of possible valid values is the smallest
+        """ Find empty field where the number of possible valid values is the smallest. """
         def is_list(item):
             return bool(isinstance(item, list))
 
@@ -77,6 +77,28 @@ class Board:
             return min_len_list[0], self.mask[min_len_list[0]].index(min_len_list[1])  # row, col
         else:
             return self.find_empty()
+
+    def find_min_empty_new(self) -> tuple[int, int] or None:
+        """ Find empty location to be filled in Sudoku,
+        where the number of possibile values is optimal. """
+
+        def not_zero_element_list(item):
+            return bool(isinstance(item, list) and len(item) != 0)
+
+        shortest_cue_lists = {}
+        for y_pos, row in enumerate(self.mask):
+            sorted_lists = sorted(filter(not_zero_element_list, row), key=len, reverse=True)
+            if len(sorted_lists) >= 1:
+                for item in sorted_lists:
+                    shortest_cue_lists[(y_pos, row.index(item))] = len(sorted_lists[0])
+
+        shortest_cue_lists = dict(sorted(shortest_cue_lists.items(), key=lambda item: item[1]))
+
+        for coordinate in shortest_cue_lists.keys():
+            if self.board[coordinate[0]][coordinate[1]] == 0:
+                return coordinate[0], coordinate[1]
+
+        return self.find_empty()
 
     def set_clues(self):
         clues = []
@@ -119,8 +141,8 @@ class Board:
         def masking(item):
             return bool(isinstance(item, list)) and len(item) > 1
 
-        self.clues = self.set_clues()
-        self.most_common_clues = self.set_most_common_clues()
+        #self.clues = self.set_clues()
+        #self.most_common_clues = self.set_most_common_clues()
         for y_pos, row in enumerate(self.mask):
             for numbers in filter(masking, row):
                 x_pos = row.index(numbers)
@@ -161,7 +183,7 @@ class Board:
 
     def solve(self):
         self.iterations += 1
-        pick = self.find_min_empty()
+        pick = self.find_min_empty_new()
         if not pick:
             return True
         else:
