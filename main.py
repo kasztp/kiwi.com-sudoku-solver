@@ -77,19 +77,23 @@ if __name__ == '__main__':
             preprocess_passes = challenge.preprocess_board()
             if args.verbose:
                 print(f'Preprocessing passes: {preprocess_passes}')
+                print(challenge)
         print('________________________\n')
 
         # Solve board:
         print('Solving...')
         if BATCH_MODE:
-            with ProcessPoolExecutor(max_workers=7) as executor:
+            with ProcessPoolExecutor(max_workers=8) as executor:
                 solved = list(tqdm(executor.map(batch_solve, challenges, chunksize=10), **kwargs))
 
             for index, item in enumerate(solved):
                 challenges[index] = item[1]
         else:
             challenge.solve()
-
+            if args.verbose:
+                print(f'Preprocessing passes: {preprocess_passes}')
+                print(f'Iterations: {challenge.iterations}')
+                print(challenge)
         execution_time = time() - start_time
 
         print('________________________\n')
@@ -123,6 +127,7 @@ if __name__ == '__main__':
                 to_log = (f'Iterations: {challenge.iterations}, '
                           f'Preprocessing passes: {pp[0]} '
                           f'Cues: {challenge.clues} '
+                          f'Cue Count: {sum(challenge.clues.values()), }'
                           f'Time Taken: {pp[1] + times[0]}, '
                           f'File: {FILENAME}')
                 logging.info(to_log)
@@ -133,7 +138,8 @@ if __name__ == '__main__':
                          f'Cues: {challenge.clues} '
                          f'Time Taken: {execution_time}, '
                          f'File: {FILENAME}, '
-                         f'Interpreter: {INTERPRETER}')
+                         f'Interpreter: {INTERPRETER}, '
+                         f'Cue Count: {sum(challenge.clues.values())}')
 
     except (IOError, OSError) as ex:
         print(f"Caught the Error: {ex}")
